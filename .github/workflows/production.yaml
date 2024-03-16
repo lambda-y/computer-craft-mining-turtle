@@ -1,0 +1,40 @@
+name: Production pastebin push
+
+on:
+  push:
+    branches:
+      - "production"
+
+
+jobs:
+  upload-code:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Get code
+      shell: bash
+      run: |
+        CODE=$(cat mining_turtle_script.lua)
+      id: get_code
+    - name: Upload to Pastebin
+      shell: bash
+      run: |
+        curl -X POST \
+          -d 'api_dev_key=${{secrets.PASTEBIN_DEV_KEY}}' \
+          -d 'api_paste_code=${{steps.get_code.outputs.CODE}}' \
+          -d 'api_option=paste'
+
+      with:
+        # Replace with your Pastebin API dev key (optional)
+        # Get one from https://pastebin.com/doc_api
+
+        name: "ComputerCraft Code - ${{ github.sha }}"
+        api_dev_key: ${{ secrets.PASTEBIN_DEV_KEY }}
+        api_paste_format: lua
+
+        api_paste_code: ${{ steps.get_code.outputs.CODE }}
+
+      id: pastebin_upload
+    - name: Share Pastebin URL
+      run: |
+        echo "Pastebin URL: ${{ steps.pastebin_upload.outputs.url }}"

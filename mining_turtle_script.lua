@@ -85,7 +85,7 @@ local function tunnelForward(height)
     turtle.forward()
     mineSides()   
     -- Mine 1 block and move forward
-    for _ = 1, height do
+    for _ = 2, height do
          
         turtle.digUp()
         turtle.up()
@@ -99,7 +99,7 @@ local function tunnelForward(height)
     turtle.forward()
     mineSides()
 
-    for _ = 1, height do
+    for _ = 2, height do
         turtle.digDown()
         turtle.down()
         mineSides()
@@ -162,17 +162,23 @@ local function main()
     local choice = read() + 0-- read a number
 
     if choice == 1 then
-        io.write("\nHow far? -1 for infinite\n")
-        local distance = read() + 0
-
+        
         io.write("\nHow tall?\n")
         local height = read() + 0
-        if distance < 0 then
+
+        io.write("How far? runs forever if empty, 0 or less than 0\n")
+        local distance = read()
+        if distance == "" then
+            distance = 0
+        end
+        distance = distance + 0
+
+        if distance <= 0 then
             while true do
                 tunnelForward(height)
             end
         end
-        for _ = 0, choice do
+        for _ = 0, distance do
             tunnelForward(height)
         end
     end
